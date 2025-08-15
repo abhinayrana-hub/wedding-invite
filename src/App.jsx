@@ -462,7 +462,8 @@ function ShareCard() {
 export default function App() {
   const [introDone, setIntroDone] = useState(false);
   const audioRef = useRef(null);
-  const [playing, setPlaying] = useState(true);
+  const [playing, setPlaying] = useState(false);
+  const [audioBlocked, setAudioBlocked] = useState(false);
 
   // 👉 NEW: track full document height for the petals layer
   const [pageHeight, setPageHeight] = useState(0);
@@ -525,57 +526,47 @@ export default function App() {
   //   }
   // }, []);
 
-  // Autoplay reliably: start muted (allowed), unmute on first gesture unless user paused
+  // Try to autoplay with sound on load/refresh. If blocked by the browser, keep retrying for a few seconds
+  // and resume whenever the tab regains focus/visibility. We still respect a saved user pause preference.
   useEffect(() => {
     const a = audioRef.current;
     if (!a) return;
 
     a.loop = true;
-    a.volume = 1; // target volume when unmuted
+    a.muted = false;
 
-    const pref = localStorage.getItem("musicPref") || "play";
+    const getPref = () => localStorage.getItem("musicPref") || "play";
 
-    const tryPlay = () =>
-      a
-        .play()
-        .then(() => setPlaying(!a.paused))
-        .catch(() => {
-          /* autoplay may be blocked; we'll unlock on gesture */
-        });
-
-    if (pref !== "pause") {
-      // Start muted so autoplay isn't blocked; we unmute on first interaction
-      a.muted = true;
-      tryPlay();
-    } else {
-      a.pause();
-      setPlaying(false);
-    }
-
-    // First interaction → unmute and ensure playback
+    // Start on first interaction only
     const unlock = () => {
-      const saved = localStorage.getItem("musicPref") || "play";
-      if (saved === "pause") return;
-      a.muted = false;
-      if (a.paused) tryPlay();
-      setPlaying(true);
-    };
-    document.addEventListener("pointerdown", unlock, { once: true });
-    document.addEventListener("keydown", unlock, { once: true });
+      if (getPref() === "pause") return;
+      a.play()
+        .then(() => {
+          setPlaying(true);
+          setAudioBlocked(false);
+        })
+        .catch(() => setAudioBlocked(true));
 
-    // Resume when tab regains focus/visibility (unless user paused)
-    const onVis = () => {
-      const saved = localStorage.getItem("musicPref") || "play";
-      if (!document.hidden && saved !== "pause") tryPlay();
+      // Remove all listeners after first trigger
+      document.removeEventListener("pointerdown", unlock);
+      document.removeEventListener("touchstart", unlock);
+      window.removeEventListener("wheel", unlock);
+      window.removeEventListener("scroll", unlock);
     };
-    document.addEventListener("visibilitychange", onVis);
-    window.addEventListener("focus", onVis);
+
+    document.addEventListener("pointerdown", unlock, { once: true });
+    document.addEventListener("touchstart", unlock, {
+      once: true,
+      passive: true,
+    });
+    window.addEventListener("wheel", unlock, { once: true, passive: true });
+    window.addEventListener("scroll", unlock, { once: true, passive: true });
 
     return () => {
       document.removeEventListener("pointerdown", unlock);
-      document.removeEventListener("keydown", unlock);
-      document.removeEventListener("visibilitychange", onVis);
-      window.removeEventListener("focus", onVis);
+      document.removeEventListener("touchstart", unlock);
+      window.removeEventListener("wheel", unlock);
+      window.removeEventListener("scroll", unlock);
     };
   }, []);
 
@@ -604,8 +595,13 @@ export default function App() {
     if (!a) return;
     if (a.paused) {
       a.play()
-        .then(() => setPlaying(true))
-        .catch(() => {});
+        .then(() => {
+          setPlaying(true);
+          setAudioBlocked(false);
+        })
+        .catch(() => {
+          setAudioBlocked(true);
+        });
       localStorage.setItem("musicPref", "play");
     } else {
       a.pause();
@@ -695,6 +691,12 @@ export default function App() {
             <Music className="w-4 h-4" /> {playing ? "Pause" : "Play"} music
           </button>
         </div>
+
+        {audioBlocked && (
+          <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-40 text-xs px-3 py-1 rounded-full border bg-white/90 backdrop-blur shadow">
+            Browser blocked sound on load. Tap Play once to enable audio.
+          </div>
+        )}
 
         <div className="sm:hidden fixed bottom-4 left-1/2 -translate-x-1/2 z-40 flex gap-3">
           <a

@@ -1,0 +1,36 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+/* Optional beautiful font for Devanagari & headings */
+
+@import url("https://fonts.googleapis.com/css2?family=Noto+Serif+Devanagari:wght@400;700&family=Marcellus&display=swap");
+
+/* optional: nicer type for Devanagari text blocks */
+.devnagari {
+  font-family: "Noto Serif Devanagari", serif;
+}
+
+/* index.css */
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+/* in your CSS file */
+@keyframes fall {
+  0% {
+    transform: translateY(-10vh) rotate(0deg);
+  }
+  100% {
+    transform: translateY(100vh) rotate(360deg);
+  }
+}
+.petal {
+  position: absolute;
+  width: 30px; /* adjust size as needed */
+  height: 30px;
+  background-image: url("/path/to/petal.png"); /* a petal graphic */
+  background-size: contain;
+  animation: fall linear infinite;
+}

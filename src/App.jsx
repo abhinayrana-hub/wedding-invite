@@ -8,7 +8,7 @@ import ganeshImg from "./assets/ganesh.png";
 import groomImg from "./assets/groom.png";
 import brideImg from "./assets/bride.png";
 import background from "./assets/background1.png";
-import sitarMusic from "./assets/Gour_Sarang_unknown_sitar.mp3";
+import sitarMusic from "./assets/background_music.mp3";
 import FallingPetals from "./components/FallingPetals";
 
 /** ---------- IMAGES (you can later move these to /public/assets) ---------- */
@@ -236,7 +236,7 @@ function Hero({ reveal = false }) {
                 delay: 0.05,
               }}
               className="mt-4 text-center text-sm text-gray-700"
-            >
+            
               Smt. Brahmi and Late Shri Jaswant Singh request the pleasure of
               your presence on the auspicious occasion of the wedding ceremony
               of their loving grandson
@@ -611,7 +611,7 @@ export default function App() {
   };
 
   return (
-    <div className="relative min-h-screen text-gray-800  bg-rose-200/80 border-r border-rose-300 shadow-xl">
+    <div className="relative w-full min-h-screen text-gray-800  bg-rose-200/80 border-r border-rose-300 shadow-xl">
       {/* Blurred, lightened background layer */}
       <div
         className="absolute inset-0 z-0"
@@ -688,12 +688,12 @@ export default function App() {
             onClick={toggleAudio}
             className="px-3 py-2 rounded-full border bg-white/90 backdrop-blur shadow inline-flex items-center gap-2 text-sm"
           >
-            <Music className="w-4 h-4" /> {playing ? "Pause" : "Play"} music
+            <Music className="w-4 h-4" /> {playing ? "Pause" : "Play"}
           </button>
         </div>
 
         {audioBlocked && (
-          <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-40 text-xs px-3 py-1 rounded-full border bg-white/90 backdrop-blur shadow">
+          <div className="fixed top-4 left-1/2 -translate-x-1/2 z-40 text-xs px-3 py-1 rounded-full border bg-white/90 backdrop-blur shadow">
             Browser blocked sound on load. Tap Play once to enable audio.
           </div>
         )}

@@ -183,9 +183,13 @@ function Hero({ reveal = false }) {
             }}
             className="mt-6 text-center text-sm text-gray-700 devnagari"
           >
-            Smt. Brahmi and Late Shri Jaswant Singh request the pleasure of your
-            presence on the auspicious occasion of the wedding ceremony of their
-            loving grandson
+            <div className="font-bold devnagari">
+              Smt. Brahmi and Late Shri Jaswant Singh
+            </div>
+            <div>
+              request the pleasure of your presence on the auspicious occasion
+              of the wedding ceremony of their loving grandson
+            </div>
           </motion.div>
         </div>
 
@@ -341,7 +345,6 @@ function Details() {
     { label: "Lady Sangeet & Mehandi", time: "8:00 a.m." },
     { label: "Samuhat and Haldi", time: "10:00 a.m." },
     { label: "Shand", time: "5:30 p.m." },
-    { label: "Snacks (Ladies & kids only)", time: "6:30 p.m." },
     { label: "Dinner", time: "8:30 p.m." },
     { label: "Parshai and Sherabandi", time: "10:00 p.m." },
   ];
@@ -349,7 +352,7 @@ function Details() {
   const wednesday = [
     { label: "Departure of Barat", time: "7:30 a.m." },
     { label: "Lagan", time: "9:00 a.m." },
-    { label: "Badhu Aagaman", time: "5:30 p.m." },
+    { label: "Vadhu Aagaman", time: "5:30 p.m." },
     { label: "Dinner", time: "8:00 p.m." },
   ];
 
@@ -571,13 +574,17 @@ export default function App() {
   }, []);
 
   const handleDownload = async () => {
-    const node = document.getElementById("share-card");
+    const node = document.getElementById("capture-root");
     if (!node) return;
     try {
       const canvas = await html2canvas(node, {
         useCORS: true,
-        backgroundColor: null, // transparent background if desired
-        scale: 2, // increase resolution
+        backgroundColor: "#ffffff", // ensures white background
+        scale: 2, // sharper PNG
+        windowWidth: node.scrollWidth,
+        windowHeight: node.scrollHeight,
+        scrollX: 0,
+        scrollY: -window.scrollY, // fixes offset if scrolled
       });
       const dataUrl = canvas.toDataURL("image/png");
       const link = document.createElement("a");
@@ -632,7 +639,32 @@ export default function App() {
         className="pointer-events-none absolute top-0 left-0 w-full z-20"
         style={{ height: `${pageHeight}px` }}
       >
-        <FallingPetals />
+        <>
+          <FallingPetals />
+          <FallingPetals />
+          <FallingPetals />
+          <FallingPetals />
+          <FallingPetals />
+          <FallingPetals />
+          <FallingPetals />
+          <FallingPetals />
+          <FallingPetals />
+          <FallingPetals />
+          <FallingPetals />
+          <FallingPetals />
+          <FallingPetals />
+          <FallingPetals />
+          <FallingPetals />
+          <FallingPetals />
+          <FallingPetals />
+          <FallingPetals />
+          <FallingPetals />
+          <FallingPetals />
+          <FallingPetals />
+          <FallingPetals />
+          <FallingPetals />
+          <FallingPetals />
+        </>
       </div>
 
       {/* Main content goes here, above the background layers */}
@@ -673,7 +705,7 @@ export default function App() {
         </header>
 
         {/* Content */}
-        <main className="pt-14">
+        <main id="capture-root" className="pt-14">
           <Hero reveal={introDone} />
           <Details />
 
